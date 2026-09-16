@@ -27,6 +27,8 @@ def is_valid_port(port):
     """True when port is a real port number, 1 through 65535."""
     # TODO 1
     #   Return whether port is at least 1 and no more than 65535.
+    if port >= 1 and port <= 65535:
+        return True
     return False
 
 
@@ -36,7 +38,16 @@ def port_range(port):
     #   Call is_valid_port first. When it says the port is not valid, return
     #   'invalid' -- do not repeat the 1 to 65535 test here.
     #   Otherwise use if / elif / else on the ranges in the table above.
-    return "invalid"
+    if not is_valid_port(port):
+        return "invalid"
+    elif port <= 1023:
+        return "well-known"
+    elif port <= 49151:
+        return "registered"
+    elif port <= 65535:
+        return "dynamic"
+    else:
+        return "invalid"
 
 
 def is_cleartext(port):
@@ -45,6 +56,8 @@ def is_cleartext(port):
     # TODO 3
     #   Compare port to each of the four numbers with == and join the
     #   comparisons with or. No lists this week.
+    if port == 21 or port == 23 or port == 80 or port == 110:
+        return True
     return False
 
 
@@ -56,6 +69,12 @@ def rule_for(port):
     #   ALLOW   everything else
     #   Build this out of the three functions above. It should not contain a
     #   single port number of its own.
+    if not is_valid_port(port) or is_cleartext(port):
+        return "BLOCK"
+    elif port_range(port) == "dynamic":
+        return "REVIEW"
+    else:
+        return "ALLOW"
     return "BLOCK"
 
 
@@ -88,6 +107,12 @@ while True:
 
     # TODO 5
     #   Add 1 to allowed, review or blocked, whichever matches decision.
+    if decision == "ALLOW":
+        allowed += 1
+    elif decision == "REVIEW":
+        review += 1
+    elif decision == "BLOCK":
+        blocked += 1
 
     print()
 
